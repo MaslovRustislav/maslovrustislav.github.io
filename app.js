@@ -19,11 +19,18 @@ class App{
 
         this.renderer.setAnimationLoop(this.render.bind(this));
     
+        const geometry = this.renderer.BufferGeometry();
+        const material = this.renderer.MeshStandardMaterial({color:0xff0000});
+
+        this.mesh = new THREE.Mesh(geometry, material);
+
+        this.scene.add(this.mesh);
+
         window.addEventListener('resize', this.resize.bind(this) );
 	}	
     
     resize(){
-   
+        this.mesh.rotateY(0.01)
     }
     
 	render( ) {   
