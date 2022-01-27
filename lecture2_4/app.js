@@ -1,5 +1,5 @@
-import * as THREE from './libs/three/three.module.js';
-import { OrbitControls } from './libs/three/jsm/OrbitControls.js';
+import * as THREE from '../libs/three/three.module.js';
+import { OrbitControls } from '../libs/three/jsm/OrbitControls.js';
 
 class App{
 	constructor(){
@@ -26,7 +26,30 @@ class App{
 
         this.renderer.setAnimationLoop(this.render.bind(this));
     
-        const geometry = new THREE.BoxBufferGeometry();
+        // const geometry = new THREE.CircleBufferGeometry(1,32);
+
+        const shape = new THREE.Shape();
+        const outerRadius=0.8;
+        const innerRadius=0.4;
+        const PI2 =Math.PI*2;
+        const inc = PI2/10;
+
+        shape.moveTo(outerRadius, 0);
+
+        let inner = true;
+
+        for(let theta = inc; theta<PI2;theta+=inc){
+            const radius = (inner) ? innerRadius : outerRadius;
+            shape.lineTo(Math.cos(theta) * radius,Math.sin(theta) * radius);
+            inner = ! inner
+        }
+        const extrideSettings ={
+            steps:1,
+            depth:1,
+            bevelEnabled:false
+        }
+        const geometry = new THREE.ExtrudeGeometry(shape, extrideSettings)
+
         const material = new THREE.MeshStandardMaterial({color:0xff0000});
 
         this.mesh = new THREE.Mesh(geometry, material);
