@@ -37,7 +37,7 @@ class App{
         
 		this.sun.position.set( 0, 10, 10 );
 		this.scene.add( this.sun );
-					
+			
 		this.renderer = new THREE.WebGLRenderer({ antialias: true } );
 		this.renderer.setPixelRatio( window.devicePixelRatio );
 		this.renderer.setSize( window.innerWidth, window.innerHeight );
@@ -48,15 +48,15 @@ class App{
 
         this.workingMatrix = new THREE.Matrix4();
 		this.clock = new THREE.Clock();
-        this.raycaster = new THREE.Raycaster();
-
+		this.raycaster = new THREE.Raycaster();
+        
 		this.stats = new Stats();
 		container.appendChild( this.stats.dom );
 		
 		this.loadingBar = new LoadingBar();
         
 		this.loadEnvironment();
-            		
+    		
     	this.loading = true;
     	
 		window.addEventListener('resize', this.render.bind(this));
@@ -151,12 +151,25 @@ class App{
         const self = this;
         
         this.teleports = [];
-        locations.forEach(location => {
+        locations.forEach( location => {
             const teleport = new TeleportMesh();
-            teleport.position.copy(location);
-            self.scene.add(teleport);
+            teleport.position.copy( location );
+            self.scene.add( teleport );
             self.teleports.push(teleport);
         })
+        
+        const waypoints = [
+            new THREE.Vector3(-3.550, 0.263, 4.104),
+            new THREE.Vector3( 2.559, 0.093, 3.052),
+            new THREE.Vector3(-1.291, 0.086, 0.637),
+            new THREE.Vector3( 9.339, 2.689, 0.447),
+            new THREE.Vector3( 7.144, 2.660, 0.783),
+            new THREE.Vector3( 6.816, 2.647, 7.008),
+            new THREE.Vector3(-8.298, 2.636, 0.930),
+            new THREE.Vector3(-1.746, 2.692,-1.986),
+            new THREE.Vector3(-7.422, 2.586, 6.639),
+        ];
+        
 		this.setupXR();
 
 		this.loading = false;
@@ -211,7 +224,10 @@ class App{
         
         function onSelectStart( ){
             this.userData.selectPressed = true;
-           if (this.userData.marker.visible){
+            if (this.userData.teleport){
+                self.player.object.position.copy( this.userData.teleport.position );
+                self.teleports.forEach( teleport => teleport.fadeOut(0.5) );
+            }else if (this.userData.marker.visible){
                 const pos = this.userData.marker.position;
                 console.log( `${pos.x.toFixed(3)}, ${pos.y.toFixed(3)}, ${pos.z.toFixed(3)}`);
             }
@@ -223,12 +239,12 @@ class App{
         
         function onSqueezeStart( ){
             this.userData.squeezePressed = true;
-            self.teleports.forEach(teleport => teleport.fadeIn(1));
+            self.teleports.forEach( teleport => teleport.fadeIn(1) );
         }
         
         function onSqueezeEnd( ){
             this.userData.squeezePressed = false;
-            self.teleports.forEach(teleport => teleport.fadeOut(1));
+            self.teleports.forEach( teleport => teleport.fadeOut(1) );
         }
         
         const btn = new VRButton( this.renderer );
@@ -243,7 +259,8 @@ class App{
         })
         
         this.collisionObjects = [this.navmesh];
-        this.teleports.forEach(teleport => self.collisionObjects.push(teleport.children));
+        this.teleports.forEach( teleport => self.collisionObjects.push(teleport.children[0]) );
+                    
     }
 
     intersectObjects( controller ) {
@@ -269,6 +286,9 @@ class App{
                 marker.scale.set(1,1,1);
                 marker.position.copy( intersect.point );
                 marker.visible = true;
+            }else if (intersect.object.parent && intersect.object.parent instanceof TeleportMesh){
+                intersect.object.parent.selected = true;
+                controller.userData.teleport = intersect.object.parent;
             }
     
         } 
@@ -314,10 +334,11 @@ class App{
 		this.stats.update();
         
         if (this.renderer.xr.isPresenting){
-
-            this.teleports.forEach(teleport =>{
+            
+            this.teleports.forEach( teleport =>{
+                teleport.selected = false;
                 teleport.update();
-            })
+            });
 
             this.controllers.forEach( controller => {
                 self.intersectObjects( controller );
