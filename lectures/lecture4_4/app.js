@@ -89,6 +89,10 @@ class App{
         if(clip!== undefined){ 
             const action = this.mixer.clipAction(clip);
 
+            if(name === "Die"){
+                action.loop = THREE.L
+            }
+
             this.actionName = name;
             if(this.curAction) this.curAction.crossFadeTo(action,0.5);
             

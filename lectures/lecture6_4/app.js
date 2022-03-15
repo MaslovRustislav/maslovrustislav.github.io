@@ -243,7 +243,7 @@ class App{
 		let dir = new THREE.Vector3();
         if(this.joystick === undefined){
         //Store original dolly rotation
-        const quaternion = this.dolly.quaternion.clone();
+        const quaternion = this.dolly.quaternion.clone(); 
         //Get rotation for movement from the headset pose
         this.dolly.quaternion.copy( this.dummyCam.getWorldQuaternion() );
         this.dolly.getWorldDirection(dir);
@@ -253,7 +253,7 @@ class App{
             if(this.dolly.userData.forward>0){
                 dir.negate();
             }else{
-                dt= -dt;
+                dt = -dt;
             }
         }
   		this.raycaster.set(pos, dir);

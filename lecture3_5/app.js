@@ -148,8 +148,9 @@ class App{
                 geometry = new THREE.RingBufferGeometry( 0.02, 0.04, 32 ).translate( 0, 0, - 1 );
                 material = new THREE.MeshBasicMaterial( { opacity: 0.5, transparent: true } );
                 controller.add( new THREE.Mesh( geometry, material ) )
-
+    
         }
+        
 
     }
     
@@ -169,7 +170,7 @@ class App{
                 this.highlight.visible = false;
             }
         }
-    }
+    };
     
     resize(){
         this.camera.aspect = window.innerWidth / window.innerHeight;
@@ -177,11 +178,11 @@ class App{
         this.renderer.setSize( window.innerWidth, window.innerHeight );  
     }
     
-	render( ) {   
+	render() {   
         this.stats.update();
         if (this.controller ) this.handleController( this.controller );
         this.renderer.render( this.scene, this.camera );
     }
 }
-
+ 
 export { App };

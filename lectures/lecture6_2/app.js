@@ -297,6 +297,8 @@ class App{
         const camPos = thos.dummyCam.getWorldPosition(this.workingVec3);
         this.ui.updateElement('name',obj.name);
         this.ui.updateElement('info',obj.info.name);
+        this.ui.update();
+        this.ui.lookAt(camPos);
         this.ui.visible = true;
         this.boardShown = name;
 
